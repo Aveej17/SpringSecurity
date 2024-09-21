@@ -2,23 +2,33 @@ package org.jeeva.springsecurity.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.jeeva.springsecurity.model.Student;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.jeeva.springsecurity.model.User;
+import org.jeeva.springsecurity.request.UserRegisterRequest;
+import org.jeeva.springsecurity.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
-public class StudentController {
-    List<Student> students = new ArrayList<>(List.of(
-            new Student(1, "Jeeva", "java"),
-            new Student(2, "Kiran", "python"),
-            new Student(3, "Mansy", "BlockChain")
 
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+
+    @Autowired
+    private UserService userService;
+
+
+
+    List<User> users = new ArrayList<>(List.of(
+            new User(1,"Jeeva","java"),
+            new User(2,"Kiran","python"),
+            new User(3,"Mansy","BlockChain")
     ));
 
     @GetMapping("/csrf-token")
@@ -26,15 +36,28 @@ public class StudentController {
         return (CsrfToken) request.getAttribute("_csrf");
 
     }
-    @GetMapping("/students")
-    public List<Student> getStudents(){
-        return  students;
+    @GetMapping("/")
+    public List<User> getStudents(){
+        return  users;
     }
 
 
-    @PostMapping("/addStudent")
-    public void addStudent(@RequestBody Student student){
-        students.add(student);
+    @PostMapping("/adduser")
+    public void addStudent(@RequestBody User user){
+        users.add(user);
+    }
+
+    @PostMapping("/register")
+    public User register(@RequestBody UserRegisterRequest userRegisterRequest){
+        return userService.registerUser(userRegisterRequest);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody UserRegisterRequest userRegisterRequest){
+
+        return userService.login(userRegisterRequest);
     }
 
 }
+
+
